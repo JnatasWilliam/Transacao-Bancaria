@@ -1,0 +1,61 @@
+# 🛠️ Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+build.log
+.mvn/
+.settings/
+
+# 📁 Configuração de ambiente
+*.properties
+!src/main/resources/application.properties  # mantém o principal se necessário
+
+# 🧠 IDEs
+
+## IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+## Eclipse / STS
+.project
+.classpath
+.factorypath
+.apt_generated/
+.springBeans/
+.sts4-cache/
+
+## NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+## VS Code
+.vscode/
+
+# 🪟 Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 📦 Arquivos temporários e de sistema
+*.log
+*.tmp
+*.swp
+*.bak
+*.old
+
+# 🔍 Arquivos de compilação
+build/
+out/
+bin/
+
+# 📸 macOS
+.DS_Store

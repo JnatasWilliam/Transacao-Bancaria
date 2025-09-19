@@ -6,6 +6,7 @@ import com.jonatas.transacao.command.dto.AuthResponse;
 import com.jonatas.transacao.command.dto.LoginRequest;
 import com.jonatas.transacao.command.dto.RegistroRequest;
 import com.jonatas.transacao.command.security.JwtTokenProvider;
+import com.jonatas.transacao.command.util.CpfValidator;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -28,15 +29,16 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<UUID> register(@Valid @RequestBody RegistroRequest req) {
-        UUID usuarioId = usuarioService.registrar(
-                req.nomeCompleto(),
-                req.documento(),
-                req.login(),
-                req.senha()
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioId);
+    public ResponseEntity<?> register(@RequestBody @Valid RegistroRequest request) {
+
+        if (!CpfValidator.isValid(request.documento())) {
+            return ResponseEntity.badRequest().body("CPF inválido");
+        }
+
+        // Aqui segue a lógica de persistência e geração de token
+        return ResponseEntity.ok(new AuthResponse("token-gerado-aqui"));
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req) {

@@ -1,6 +1,11 @@
 package com.jonatas.transacao.command.controller;
 
 import java.util.UUID;
+
+import com.jonatas.transacao.command.dto.AuthResponse;
+import com.jonatas.transacao.command.dto.LoginRequest;
+import com.jonatas.transacao.command.dto.RegistroRequest;
+import com.jonatas.transacao.command.security.JwtTokenProvider;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -12,23 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.jonatas.transacao.command.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
-
-// DTOs
-record RegistroRequest(
-        String nomeCompleto,
-        String documento,
-        String login,
-        String senha
-) {}
-
-record LoginRequest(
-        String login,
-        String senha
-) {}
-
-record AuthResponse(
-        String token
-) {}
 
 @RestController
 @RequestMapping("/api/auth")

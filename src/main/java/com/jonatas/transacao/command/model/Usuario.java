@@ -49,14 +49,14 @@ public class Usuario implements UserDetails {
             String login,
             String senhaHash
     ) {
-        validarCPE(documento);
+        validarCPF(documento);
         this.nomeCompleto = nomeCompleto;
         this.documento   = documento;
         this.login       = login;
         this.senhaHash   = senhaHash;
     }
 
-    private void validarCPE(String doc) {
+    private void validarCPF(String doc) {
         if (doc.chars().distinct().count() < 2) {
             throw new IllegalArgumentException("Documento inválido para CPE");
         }

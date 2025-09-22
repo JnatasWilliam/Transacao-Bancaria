@@ -1,15 +1,12 @@
 package com.jonatas.transacao.command.controller;
 
-import java.util.UUID;
-
-import com.jonatas.transacao.command.dto.AuthResponse;
-import com.jonatas.transacao.command.dto.LoginRequest;
-import com.jonatas.transacao.command.dto.RegistroRequest;
+import com.jonatas.transacao.command.dto.AuthResponseDto;
+import com.jonatas.transacao.command.dto.LoginRequestDto;
+import com.jonatas.transacao.command.dto.RegistroRequestDto;
 import com.jonatas.transacao.command.security.JwtTokenProvider;
 import com.jonatas.transacao.command.util.CpfValidator;
 import jakarta.validation.Valid;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,24 +26,24 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegistroRequest request) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegistroRequestDto request) {
 
         if (!CpfValidator.isValid(request.documento())) {
             return ResponseEntity.badRequest().body("CPF inválido");
         }
 
         // Aqui segue a lógica de persistência e geração de token
-        return ResponseEntity.ok(new AuthResponse("token-gerado-aqui"));
+        return ResponseEntity.ok(new AuthResponseDto("token-gerado-aqui"));
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
+    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginRequestDto req) {
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(req.login(), req.senha())
         );
 
         String token = jwtTokenProvider.generateToken(auth);
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity.ok(new AuthResponseDto(token));
     }
 }

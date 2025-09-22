@@ -1,7 +1,6 @@
 package com.jonatas.transacao.command.dto;
 
-// DTOs
-public record RegistroRequest(
+public record RegistroRequestDto(
         String nomeCompleto,
         String documento,
         String login,

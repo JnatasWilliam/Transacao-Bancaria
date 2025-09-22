@@ -1,6 +1,6 @@
 package com.jonatas.transacao.command.dto;
 
-public record LoginRequest(
+public record LoginRequestDto(
         String login,
         String senha
 ) {

@@ -1,6 +1,6 @@
 package com.jonatas.transacao.command.dto;
 
-public record AuthResponse(
+public record AuthResponseDto(
         String token
 ) {
 }

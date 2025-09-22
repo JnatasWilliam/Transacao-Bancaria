@@ -26,8 +26,8 @@ public class TransactionCommandController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> criar(@RequestBody CreateTransactionCommandDto dto) {
-        UUID id = handler.handle(dto);
+    public ResponseEntity<Void> transferir(@RequestBody CreateTransactionCommandDto dto) {
+        UUID id = handler.transferir(dto);
         return ResponseEntity
                 .created(URI.create("/api/query/transacoes/" + id))
                 .build();

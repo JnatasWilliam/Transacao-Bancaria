@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface TransacaoRepository extends JpaRepository<Transacao, UUID> {
     List<Transacao> findByOrigemOrDestino(String origem, String destino);
+    List<Transacao> findByOrigem(String origem);
 }

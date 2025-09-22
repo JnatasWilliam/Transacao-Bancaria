@@ -2,12 +2,15 @@ package com.jonatas.transacao.query.controller;
 
 import com.jonatas.transacao.command.model.Transacao;
 import com.jonatas.transacao.command.repository.TransacaoRepository;
+import com.jonatas.transacao.query.dto.SaldoDetalhadoResponseDto;
+import com.jonatas.transacao.query.dto.SaldoResponseDto;
 import com.jonatas.transacao.query.dto.TransactionResponseDto;
 import com.jonatas.transacao.query.handler.TransactionQueryHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,13 +26,26 @@ public class TransactionQueryController {
         this.transacaoRepository = transacaoRepository;
     }
 
+    @GetMapping("/saldo")
+    public ResponseEntity<SaldoResponseDto> consultarSaldo() {
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        BigDecimal saldo = handler.consultarSaldo(login);
+        return ResponseEntity.ok(new SaldoResponseDto(saldo));
+    }
+
+    @GetMapping("/saldo")
+    public ResponseEntity<SaldoDetalhadoResponseDto> consultarSaldoDetalhado() {
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        SaldoDetalhadoResponseDto dto = handler.consultarSaldoDetalhado(login);
+        return ResponseEntity.ok(dto);
+    }
+
     @GetMapping
     public ResponseEntity<List<TransactionResponseDto>> listarMinhasTransacoes() {
         String login = SecurityContextHolder.getContext().getAuthentication().getName();
         List<TransactionResponseDto> transacoes = handler.findByUsuario(login);
         return ResponseEntity.ok(transacoes);
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<TransactionResponseDto> buscarPorId(@PathVariable UUID id) {

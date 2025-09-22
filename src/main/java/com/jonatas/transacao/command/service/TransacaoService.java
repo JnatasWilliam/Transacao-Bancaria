@@ -1,5 +1,6 @@
 package com.jonatas.transacao.command.service;
 
+import com.jonatas.transacao.command.event.TransacaoCriadaEvent;
 import com.jonatas.transacao.command.model.Conta;
 import com.jonatas.transacao.command.model.TipoTransacao;
 import com.jonatas.transacao.command.model.Transacao;
@@ -7,6 +8,7 @@ import com.jonatas.transacao.command.repository.ContaRepository;
 import com.jonatas.transacao.command.repository.TransacaoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +20,7 @@ public class TransacaoService {
 
     private final ContaRepository contaRepository;
     private final TransacaoRepository transacaoRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public UUID realizarTransferencia(String origem, String destino, BigDecimal valor) {
@@ -50,6 +53,15 @@ public class TransacaoService {
 
         transacaoRepository.save(transacao);
 
+        applicationEventPublisher.publishEvent(new TransacaoCriadaEvent(
+                transacao.getId(),
+                transacao.getOrigem(),
+                transacao.getDestino(),
+                transacao.getValor(),
+                transacao.getTipo(),
+                transacao.getCriadaEm()
+        ));
+
         return transacao.getId();
     }
 
@@ -73,6 +85,15 @@ public class TransacaoService {
                 .build();
 
         transacaoRepository.save(transacao);
+
+        applicationEventPublisher.publishEvent(new TransacaoCriadaEvent(
+                transacao.getId(),
+                transacao.getOrigem(),
+                transacao.getDestino(),
+                transacao.getValor(),
+                transacao.getTipo(),
+                transacao.getCriadaEm()
+        ));
 
         return transacao.getId();
     }
@@ -101,6 +122,15 @@ public class TransacaoService {
                 .build();
 
         transacaoRepository.save(transacao);
+
+        applicationEventPublisher.publishEvent(new TransacaoCriadaEvent(
+                transacao.getId(),
+                transacao.getOrigem(),
+                transacao.getDestino(),
+                transacao.getValor(),
+                transacao.getTipo(),
+                transacao.getCriadaEm()
+        ));
 
         return transacao.getId();
     }

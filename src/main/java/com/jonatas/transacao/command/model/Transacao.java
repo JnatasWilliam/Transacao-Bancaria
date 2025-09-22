@@ -1,19 +1,18 @@
 package com.jonatas.transacao.command.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Builder
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Table(name = "transacoes")
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)  // construtor vazio para JPA
 public class Transacao {
 
     @Id
@@ -30,16 +29,15 @@ public class Transacao {
     @Column(nullable = false)
     private BigDecimal valor;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    TipoTransacao tipo;
+
     @Column(nullable = false)
     private LocalDateTime criadaEm;
 
-    @Builder  // gera um builder com origem, destino e valor
-    public Transacao(String origem,
-                     String destino,
-                     BigDecimal valor) {
-        this.origem = origem;
-        this.destino = destino;
-        this.valor = valor;
+    @PrePersist
+    public void prePersist() {
         this.criadaEm = LocalDateTime.now();
     }
 }

@@ -5,6 +5,7 @@ import com.jonatas.transacao.command.repository.TransacaoRepository;
 import com.jonatas.transacao.query.dto.TransactionResponseDto;
 import com.jonatas.transacao.query.handler.TransactionQueryHandler;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +23,18 @@ public class TransactionQueryController {
         this.transacaoRepository = transacaoRepository;
     }
 
+    @GetMapping
+    public ResponseEntity<List<TransactionResponseDto>> listarMinhasTransacoes() {
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<TransactionResponseDto> transacoes = handler.findByUsuario(login);
+        return ResponseEntity.ok(transacoes);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<TransactionResponseDto> buscarPorId(@PathVariable UUID id) {
-        TransactionResponseDto dto = handler.findById(id);
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        TransactionResponseDto dto = handler.findById(id, login);
         return ResponseEntity.ok(dto);
     }
 
@@ -32,5 +42,4 @@ public class TransactionQueryController {
     public ResponseEntity<List<Transacao>> listarTodas() {
         return ResponseEntity.ok(transacaoRepository.findAll());
     }
-
 }

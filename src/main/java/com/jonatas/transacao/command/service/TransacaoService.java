@@ -1,6 +1,7 @@
 package com.jonatas.transacao.command.service;
 
 import com.jonatas.transacao.command.model.Conta;
+import com.jonatas.transacao.command.model.TipoTransacao;
 import com.jonatas.transacao.command.model.Transacao;
 import com.jonatas.transacao.command.repository.ContaRepository;
 import com.jonatas.transacao.command.repository.TransacaoRepository;
@@ -44,6 +45,59 @@ public class TransacaoService {
                 .origem(origem)
                 .destino(destino)
                 .valor(valor)
+                .tipo(TipoTransacao.TRANSFERENCIA)
+                .build();
+
+        transacaoRepository.save(transacao);
+
+        return transacao.getId();
+    }
+
+    @Transactional
+    public UUID depositar(String login, BigDecimal valor) {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Valor do depósito deve ser positivo");
+        }
+
+        Conta conta = contaRepository.findByUsuarioLogin(login)
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
+
+        conta.setSaldo(conta.getSaldo().add(valor));
+        contaRepository.save(conta);
+
+        Transacao transacao = Transacao.builder()
+                .origem(login)
+                .destino(login)
+                .valor(valor)
+                .tipo(TipoTransacao.DEPOSITO)
+                .build();
+
+        transacaoRepository.save(transacao);
+
+        return transacao.getId();
+    }
+
+    @Transactional
+    public UUID sacar(String login, BigDecimal valor) {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Valor do saque deve ser positivo");
+        }
+
+        Conta conta = contaRepository.findByUsuarioLogin(login)
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
+
+        if (conta.getSaldo().compareTo(valor) < 0) {
+            throw new IllegalArgumentException("Saldo insuficiente para saque");
+        }
+
+        conta.setSaldo(conta.getSaldo().subtract(valor));
+        contaRepository.save(conta);
+
+        Transacao transacao = Transacao.builder()
+                .origem(login)
+                .destino(null)
+                .valor(valor)
+                .tipo(TipoTransacao.SAQUE)
                 .build();
 
         transacaoRepository.save(transacao);

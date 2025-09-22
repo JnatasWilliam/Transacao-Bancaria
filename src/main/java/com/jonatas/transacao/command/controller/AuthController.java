@@ -17,7 +17,7 @@ import com.jonatas.transacao.command.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/command/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -31,11 +31,21 @@ public class AuthController {
         if (!CpfValidator.isValid(request.documento())) {
             return ResponseEntity.badRequest().body("CPF inválido");
         }
+        usuarioService.registrar(
+                request.nomeCompleto(),
+                request.documento(),
+                request.login(),
+                request.senha()
+        );
 
-        // Aqui segue a lógica de persistência e geração de token
-        return ResponseEntity.ok(new AuthResponseDto("token-gerado-aqui"));
+        Authentication auth = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.login(), request.senha())
+        );
+
+        String token = jwtTokenProvider.generateToken(auth);
+        return ResponseEntity.ok(new AuthResponseDto(token));
+
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginRequestDto req) {

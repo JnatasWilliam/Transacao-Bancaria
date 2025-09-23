@@ -25,7 +25,7 @@ public class TransactionCommandController {
         this.transacaoService = transacaoService;
     }
 
-    @PostMapping
+    @PostMapping("/transferencia")
     public ResponseEntity<Void> transferir(@RequestBody CreateTransactionCommandDto dto) {
         UUID id = handler.transferir(dto);
         return ResponseEntity

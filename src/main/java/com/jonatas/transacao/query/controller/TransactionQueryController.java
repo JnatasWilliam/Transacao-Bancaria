@@ -1,6 +1,8 @@
 package com.jonatas.transacao.query.controller;
 
+import com.jonatas.transacao.command.model.Conta;
 import com.jonatas.transacao.command.model.Transacao;
+import com.jonatas.transacao.command.repository.ContaRepository;
 import com.jonatas.transacao.command.repository.TransacaoRepository;
 import com.jonatas.transacao.query.dto.SaldoDetalhadoResponseDto;
 import com.jonatas.transacao.query.dto.SaldoResponseDto;
@@ -20,10 +22,12 @@ public class TransactionQueryController {
 
     private final TransactionQueryHandler handler;
     private final TransacaoRepository transacaoRepository;
+    private final ContaRepository contaRepository;
 
-    public TransactionQueryController(TransactionQueryHandler handler, TransacaoRepository transacaoRepository) {
+    public TransactionQueryController(TransactionQueryHandler handler, TransacaoRepository transacaoRepository, ContaRepository contaRepository) {
         this.handler = handler;
         this.transacaoRepository = transacaoRepository;
+        this.contaRepository = contaRepository;
     }
 
     @GetMapping("/saldo")
@@ -33,14 +37,14 @@ public class TransactionQueryController {
         return ResponseEntity.ok(new SaldoResponseDto(saldo));
     }
 
-    @GetMapping("/saldo")
+    @GetMapping("/saldodetalhado")
     public ResponseEntity<SaldoDetalhadoResponseDto> consultarSaldoDetalhado() {
         String login = SecurityContextHolder.getContext().getAuthentication().getName();
         SaldoDetalhadoResponseDto dto = handler.consultarSaldoDetalhado(login);
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping
+    @GetMapping("/minhas")
     public ResponseEntity<List<TransactionResponseDto>> listarMinhasTransacoes() {
         String login = SecurityContextHolder.getContext().getAuthentication().getName();
         List<TransactionResponseDto> transacoes = handler.findByUsuario(login);
@@ -54,8 +58,20 @@ public class TransactionQueryController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping
+    @GetMapping("/todas")
     public ResponseEntity<List<Transacao>> listarTodas() {
         return ResponseEntity.ok(transacaoRepository.findAll());
     }
+
+    @GetMapping("/idconta")
+    public ResponseEntity<String> buscarIdConta() {
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UUID idConta = contaRepository.findByUsuarioLogin(login)
+                .map(Conta::getId)
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
+
+        return ResponseEntity.ok(idConta.toString());
+    }
+
 }

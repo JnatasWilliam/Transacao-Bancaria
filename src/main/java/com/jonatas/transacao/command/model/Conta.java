@@ -17,7 +17,8 @@ import java.util.UUID;
 public class Conta {
 
     @Id
-    @GeneratedValue
+    @Column(length = 36, nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     UUID id;
 
     @OneToOne

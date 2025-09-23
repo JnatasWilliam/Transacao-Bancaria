@@ -1,7 +1,10 @@
 package com.jonatas.transacao.command.service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
+import com.jonatas.transacao.command.model.Conta;
+import com.jonatas.transacao.command.repository.ContaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
+    private final ContaRepository contaRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -54,6 +58,14 @@ public class UsuarioService implements UserDetailsService {
                 .build();
 
         usuarioRepository.save(usuario);
+
+        Conta conta = Conta.builder()
+                .usuario(usuario)
+                .saldo(BigDecimal.ZERO)
+                .build();
+
+        contaRepository.save(conta);
+
         return usuario.getId();
     }
 

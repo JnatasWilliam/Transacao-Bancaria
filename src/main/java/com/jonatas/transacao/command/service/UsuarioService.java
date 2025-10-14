@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.jonatas.transacao.command.model.Conta;
-import com.jonatas.transacao.command.repository.ContaRepository;
+import com.jonatas.transacao.command.repository.ContaCommandRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
-    private final ContaRepository contaRepository;
+    private final ContaCommandRepository contaCommandRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -64,7 +64,7 @@ public class UsuarioService implements UserDetailsService {
                 .saldo(BigDecimal.ZERO)
                 .build();
 
-        contaRepository.save(conta);
+        contaCommandRepository.save(conta);
 
         return usuario.getId();
     }

@@ -3,7 +3,7 @@ package com.jonatas.transacao.query.handler;
 import com.jonatas.transacao.command.model.Conta;
 import com.jonatas.transacao.command.model.TipoTransacao;
 import com.jonatas.transacao.command.model.Transacao;
-import com.jonatas.transacao.command.repository.ContaRepository;
+import com.jonatas.transacao.command.repository.ContaCommandRepository;
 import com.jonatas.transacao.command.repository.TransacaoRepository;
 import com.jonatas.transacao.query.dto.HistoricoTransacaoDto;
 import com.jonatas.transacao.query.dto.SaldoDetalhadoResponseDto;
@@ -21,24 +21,24 @@ import java.util.UUID;
 public class TransactionQueryHandler {
 
     private final TransacaoRepository repository;
-    private final ContaRepository contaRepository;
+    private final ContaCommandRepository contaCommandRepository;
     private final TransacaoLeituraRepository transacaoLeituraRepository;
 
-    public TransactionQueryHandler(TransacaoRepository repository, ContaRepository contaRepository, TransacaoLeituraRepository transacaoLeituraRepository) {
+    public TransactionQueryHandler(TransacaoRepository repository, ContaCommandRepository contaCommandRepository, TransacaoLeituraRepository transacaoLeituraRepository) {
         this.repository = repository;
-        this.contaRepository = contaRepository;
+        this.contaCommandRepository = contaCommandRepository;
         this.transacaoLeituraRepository = transacaoLeituraRepository;
     }
 
     public BigDecimal consultarSaldo(String login) {
-        Conta conta = contaRepository.findByUsuarioLogin(login)
+        Conta conta = contaCommandRepository.findByUsuarioLogin(login)
                 .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
 
         return conta.getSaldo();
     }
 
     public SaldoDetalhadoResponseDto consultarSaldoDetalhado(String login) {
-        Conta conta = contaRepository.findByUsuarioLogin(login)
+        Conta conta = contaCommandRepository.findByUsuarioLogin(login)
                 .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
 
         List<Transacao> transacoes = repository.findByOrigem(login).stream()

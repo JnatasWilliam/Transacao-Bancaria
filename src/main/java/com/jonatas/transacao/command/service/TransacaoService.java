@@ -4,7 +4,7 @@ import com.jonatas.transacao.command.event.TransacaoCriadaEvent;
 import com.jonatas.transacao.command.model.Conta;
 import com.jonatas.transacao.command.model.TipoTransacao;
 import com.jonatas.transacao.command.model.Transacao;
-import com.jonatas.transacao.command.repository.ContaRepository;
+import com.jonatas.transacao.command.repository.ContaCommandRepository;
 import com.jonatas.transacao.command.repository.TransacaoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +18,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TransacaoService {
 
-    private final ContaRepository contaRepository;
+    private final ContaCommandRepository contaCommandRepository;
     private final TransacaoRepository transacaoRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public UUID realizarTransferencia(String origem, String destino, BigDecimal valor) {
-        Conta contaOrigem = contaRepository.findByUsuarioLogin(origem)
+        Conta contaOrigem = contaCommandRepository.findByUsuarioLogin(origem)
                 .orElseThrow(() -> new IllegalArgumentException("Conta de origem não encontrada"));
 
-        Conta contaDestino = contaRepository.findByUsuarioLogin(destino)
+        Conta contaDestino = contaCommandRepository.findByUsuarioLogin(destino)
                 .orElseThrow(() -> new IllegalArgumentException("Conta de destino não encontrada"));
 
         if (valor.compareTo(BigDecimal.ZERO) <= 0) {
@@ -41,8 +41,8 @@ public class TransacaoService {
         contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(valor));
         contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
 
-        contaRepository.save(contaOrigem);
-        contaRepository.save(contaDestino);
+        contaCommandRepository.save(contaOrigem);
+        contaCommandRepository.save(contaDestino);
 
         Transacao transacao = Transacao.builder()
                 .origem(origem)
@@ -71,11 +71,11 @@ public class TransacaoService {
             throw new IllegalArgumentException("Valor do depósito deve ser positivo");
         }
 
-        Conta conta = contaRepository.findByUsuarioLogin(login)
+        Conta conta = contaCommandRepository.findByUsuarioLogin(login)
                 .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
 
         conta.setSaldo(conta.getSaldo().add(valor));
-        contaRepository.save(conta);
+        contaCommandRepository.save(conta);
 
         Transacao transacao = Transacao.builder()
                 .origem(login)
@@ -104,7 +104,7 @@ public class TransacaoService {
             throw new IllegalArgumentException("Valor do saque deve ser positivo");
         }
 
-        Conta conta = contaRepository.findByUsuarioLogin(login)
+        Conta conta = contaCommandRepository.findByUsuarioLogin(login)
                 .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
 
         if (conta.getSaldo().compareTo(valor) < 0) {
@@ -112,7 +112,7 @@ public class TransacaoService {
         }
 
         conta.setSaldo(conta.getSaldo().subtract(valor));
-        contaRepository.save(conta);
+        contaCommandRepository.save(conta);
 
         Transacao transacao = Transacao.builder()
                 .origem(login)

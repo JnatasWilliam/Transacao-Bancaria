@@ -2,7 +2,7 @@ package com.jonatas.transacao.query.controller;
 
 import com.jonatas.transacao.command.model.Conta;
 import com.jonatas.transacao.command.model.Transacao;
-import com.jonatas.transacao.command.repository.ContaRepository;
+import com.jonatas.transacao.command.repository.ContaCommandRepository;
 import com.jonatas.transacao.command.repository.TransacaoRepository;
 import com.jonatas.transacao.query.dto.SaldoDetalhadoResponseDto;
 import com.jonatas.transacao.query.dto.SaldoResponseDto;
@@ -22,12 +22,12 @@ public class TransactionQueryController {
 
     private final TransactionQueryHandler handler;
     private final TransacaoRepository transacaoRepository;
-    private final ContaRepository contaRepository;
+    private final ContaCommandRepository contaCommandRepository;
 
-    public TransactionQueryController(TransactionQueryHandler handler, TransacaoRepository transacaoRepository, ContaRepository contaRepository) {
+    public TransactionQueryController(TransactionQueryHandler handler, TransacaoRepository transacaoRepository, ContaCommandRepository contaCommandRepository) {
         this.handler = handler;
         this.transacaoRepository = transacaoRepository;
-        this.contaRepository = contaRepository;
+        this.contaCommandRepository = contaCommandRepository;
     }
 
     @GetMapping("/saldo")
@@ -67,7 +67,7 @@ public class TransactionQueryController {
     public ResponseEntity<String> buscarIdConta() {
         String login = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        UUID idConta = contaRepository.findByUsuarioLogin(login)
+        UUID idConta = contaCommandRepository.findByUsuarioLogin(login)
                 .map(Conta::getId)
                 .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
 
